@@ -19,8 +19,8 @@
  *    'Tue, 26 Jan 2016 13:48:02 GMT' => Date()
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
-function parseDataFromRfc2822(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromRfc2822(value) {
+  return new Date(value);
 }
 
 /**
@@ -34,8 +34,8 @@ function parseDataFromRfc2822(/* value */) {
  *    '2016-01-19T16:07:37+00:00'    => Date()
  *    '2016-01-19T08:07:37Z' => Date()
  */
-function parseDataFromIso8601(/* value */) {
-  throw new Error('Not implemented');
+function parseDataFromIso8601(value) {
+  return new Date(value);
 }
 
 
@@ -53,8 +53,19 @@ function parseDataFromIso8601(/* value */) {
  *    Date(2012,1,1)    => true
  *    Date(2015,1,1)    => false
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const year = date.getFullYear();
+  if (year % 4 !== 0) {
+    return false;
+  }
+  if (year % 100 !== 0) {
+    return true;
+  }
+  if (year % 400 !== 0) {
+    return false;
+  }
+
+  return true;
 }
 
 
@@ -73,8 +84,45 @@ function isLeapYear(/* date */) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
-function timeSpanToString(/* startDate, endDate */) {
-  throw new Error('Not implemented');
+function timeSpanToString(startDate, endDate) {
+  let commonMs = endDate - startDate;
+  let h = 0;
+  let m = 0;
+  let s = 0;
+  let ms = 0;
+  const hourInMs = 3600000;
+  const minInMs = 60000;
+  const secInMs = 1000;
+  if (commonMs >= hourInMs) {
+    h = Math.floor(commonMs / hourInMs);
+    commonMs -= h * hourInMs;
+  }
+  if (commonMs >= minInMs) {
+    m = Math.floor(commonMs / minInMs);
+    commonMs -= m * minInMs;
+  }
+  if (commonMs >= secInMs) {
+    s = Math.floor(commonMs / secInMs);
+  }
+  ms = (endDate - startDate) - (hourInMs * h) - (minInMs * m) - (secInMs * s);
+  h += '';
+  if (h.length < 2) {
+    h = 0 + h;
+  }
+  m += '';
+  if (m.length < 2) {
+    m = 0 + m;
+  }
+  s += '';
+  if (s.length < 2) {
+    s = 0 + s;
+  }
+  if (ms.length === 1) {
+    ms = `00${ms}`;
+  } else if (ms.length === 2) {
+    ms = `0${ms}`;
+  }
+  return `${h}:${m}:${s}.${ms}`;
 }
 
 
